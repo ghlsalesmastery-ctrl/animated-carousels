@@ -216,6 +216,38 @@ def main():
     cl += tone(2350, 0.3, 0.07, ((1, 1.0), (2.7, 0.3))) * 0.35
     save("clamp", cl, 0.55)
 
+    # --- Added for Slide 4 (appended last so earlier sounds stay identical) ---
+    # Whip: fast, bright pass-by for whip-pan cuts
+    save("whip", whoosh(0.26, 500, 6000, peak_at=0.45, q=0.8), 0.5)
+
+    # Slam: tight low impact for kinetic labels
+    t = t_axis(0.45)
+    sl = np.sin(2 * math.pi * (110 * np.exp(-t * 18) + 48) * t) * env_exp(len(t), 0.11)
+    sl += biquad(rng.standard_normal(len(t)), "lp", 2500) * env_exp(len(t), 0.012) * 0.7
+    save("slam", sl, 0.6)
+
+    # Pass / fail blips for creative testing
+    save("pass", tone(1567.98, 0.25, 0.06, bell) + tone(2093.0, 0.25, 0.05, bell) * 0.6, 0.4)
+    t = t_axis(0.18)
+    fail = np.sign(np.sin(2 * math.pi * 140 * t)) * env_exp(len(t), 0.05)
+    save("fail", biquad(fail, "lp", 900), 0.32)
+
+    # Tape stop: everything slows to a halt (pitch-down sweep)
+    dur = 0.5
+    t = t_axis(dur)
+    f = 220 * (1 - t / dur) ** 2 + 20
+    ts = np.sin(2 * math.pi * np.cumsum(f) / SR) + 0.4 * np.sin(4 * math.pi * np.cumsum(f) / SR)
+    ts += biquad(rng.standard_normal(len(t)), "lp", 1200) * 0.25 * (1 - t / dur)
+    save("tape_stop", ts * (1 - t / dur) ** 0.5, 0.5)
+
+    # Kick: soft low pulse for energy under the fast sequence
+    t = t_axis(0.3)
+    kick = np.sin(2 * math.pi * np.cumsum(60 + 90 * np.exp(-t * 35)) / SR) * env_exp(len(t), 0.09)
+    save("kick", kick, 0.6)
+
+    # Short single-note notification for rapid-fire messages
+    save("notify_short", tone(1318.5, 0.35, 0.09, bell), 0.45)
+
     print("wrote", len(os.listdir(OUT)), "files to", os.path.abspath(OUT))
 
 

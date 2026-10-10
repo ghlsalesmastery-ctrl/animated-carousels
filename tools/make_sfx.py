@@ -169,6 +169,20 @@ def main():
     hit += biquad(rng.standard_normal(len(t)), "lp", 1200) * env_exp(len(t), 0.05) * 0.4
     save("soft_hit", hit, 0.55)
 
+    # --- Added for Slide 2 (appended last so earlier sounds stay identical) ---
+    # Shimmer: soft glassy bell cluster for a big number landing
+    dur = 1.6
+    sh = np.zeros(int(SR * dur))
+    for k, fr in enumerate([1318.5, 1975.5, 2637.0, 3951.1]):
+        off = int(k * 0.035 * SR)
+        x = tone(fr, dur, 0.45 - k * 0.07, ((1, 1.0), (2.76, 0.12)))
+        sh[off:] += x[: len(sh) - off] * (0.9 - k * 0.15)
+    sh += whoosh(dur, 3000, 9000, peak_at=0.08, q=0.7) * 0.15
+    save("shimmer", sh, 0.45)
+
+    # Counter tick: crisp, tiny, slightly brighter than "tick"
+    save("count_tick", key_click(5200, 900, dur=0.03, tau=0.003, body=0.2), 0.35)
+
     print("wrote", len(os.listdir(OUT)), "files to", os.path.abspath(OUT))
 
 

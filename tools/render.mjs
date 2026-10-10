@@ -1,9 +1,11 @@
 // Render slides to renders/slide-XX.mp4
 //   npm run render            → all slides
-//   npm run render -- Slide1  → one slide
+//   npm run render -- Slide2  → one slide
+// Output: renders/carousel-<issue>-slide-XX.mp4
 import {execFileSync} from 'node:child_process';
 import {existsSync, mkdirSync, renameSync} from 'node:fs';
 
+const ISSUE = '001';
 const all = ['Slide1', 'Slide2', 'Slide3', 'Slide4', 'Slide5'];
 const requested = process.argv.slice(2);
 const ids = requested.length ? requested : all;
@@ -23,7 +25,7 @@ for (const id of ids) {
     continue;
   }
   const n = id.replace('Slide', '').padStart(2, '0');
-  const out = `renders/slide-${n}.mp4`;
+  const out = `renders/carousel-${ISSUE}-slide-${n}.mp4`;
   console.log(`\n▶ ${id} → ${out}`);
   const raw = `out/${id}-raw.mp4`;
   execFileSync('npx', ['remotion', 'render', 'src/index.ts', id, raw, ...browserArgs], {stdio: 'inherit'});

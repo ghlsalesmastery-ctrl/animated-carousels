@@ -4,6 +4,7 @@ import {Slide1, SLIDE1_DURATION} from './slides/Slide1';
 import {Slide2, SLIDE2_DURATION} from './slides/Slide2';
 import {Slide3, SLIDE3_DURATION} from './slides/Slide3';
 import {Slide4, SLIDE4_DURATION} from './slides/Slide4';
+import {Slide5, SLIDE5_DURATION} from './slides/Slide5';
 import {FPS, HEIGHT, WIDTH} from './theme';
 
 // Each slide is its own composition → its own independently playable MP4.
@@ -13,5 +14,6 @@ export const Root: React.FC = () => (
     <Composition id="Slide2" component={Slide2} durationInFrames={SLIDE2_DURATION} fps={FPS} width={WIDTH} height={HEIGHT} />
     <Composition id="Slide3" component={Slide3} durationInFrames={SLIDE3_DURATION} fps={FPS} width={WIDTH} height={HEIGHT} />
     <Composition id="Slide4" component={Slide4} durationInFrames={SLIDE4_DURATION} fps={FPS} width={WIDTH} height={HEIGHT} />
+    <Composition id="Slide5" component={Slide5} durationInFrames={SLIDE5_DURATION} fps={FPS} width={WIDTH} height={HEIGHT} />
   </>
 );

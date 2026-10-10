@@ -183,6 +183,39 @@ def main():
     # Counter tick: crisp, tiny, slightly brighter than "tick"
     save("count_tick", key_click(5200, 900, dur=0.03, tau=0.003, body=0.2), 0.35)
 
+    # --- Added for Slide 3 (appended last so earlier sounds stay identical) ---
+    # Water drips: short upward-sweeping "bloop" (how real droplets sound)
+    for i, (f0, f1) in enumerate([(700, 1700), (820, 2000), (600, 1500)]):
+        t = t_axis(0.09)
+        f = f0 + (f1 - f0) * (t / t[-1]) ** 0.6
+        x = np.sin(2 * math.pi * np.cumsum(f) / SR) * env_exp(len(t), 0.018)
+        x += biquad(rng.standard_normal(len(t)), "hp", 4000) * env_exp(len(t), 0.002) * 0.25
+        save(f"drip_{i + 1}", x, 0.5)
+
+    # Ringtone: soft marimba-like four-note phrase
+    mar = ((1, 1.0), (4.0, 0.12), (9.2, 0.03))
+    notes = [1046.5, 1318.5, 1568.0, 1318.5]
+    ring = np.zeros(int(SR * 0.9))
+    for k, fr in enumerate(notes):
+        off = int(k * 0.13 * SR)
+        x = tone(fr, 0.5, 0.11, mar)
+        ring[off: off + len(x)] += x[: len(ring) - off]
+    save("ringtone", ring, 0.5)
+
+    # Missed call: two soft descending notes
+    a2 = tone(783.99, 0.6, 0.16, bell)
+    b2 = tone(587.33, 0.7, 0.2, bell)
+    off = int(0.12 * SR)
+    missed = np.zeros(len(b2) + off)
+    missed[: len(a2)] += a2
+    missed[off:] += b2
+    save("missed", missed, 0.5)
+
+    # Clamp: metallic snap (click + short ring)
+    cl = key_click(3200, 260, dur=0.3, tau=0.008, body=0.5)
+    cl += tone(2350, 0.3, 0.07, ((1, 1.0), (2.7, 0.3))) * 0.35
+    save("clamp", cl, 0.55)
+
     print("wrote", len(os.listdir(OUT)), "files to", os.path.abspath(OUT))
 
 
